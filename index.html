@@ -1,74 +1,512 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sonalia診断｜あなたのOSを見える化する</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Sonalia｜“思考OS”を解析する新しい診断</title>
+  <meta name="description" content="ルーツ×体験×8係数×行動OSパターン（FCEA）で、あなたの今と次の一歩を可視化。Sonalia（ソナリア）は性格診断ではなく“OS診断”。" />
+  <meta name="theme-color" content="#0d1b2a">
+
+  <!-- OG / Twitter -->
+  <meta property="og:title" content="Sonalia｜“思考OS”を解析する新しい診断">
+  <meta property="og:description" content="ルーツ×体験×8係数×行動OSパターン（FCEA）で、あなたの今と次の一歩を可視化。">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="/assets/ogp.png">
+  <meta property="og:url" content="https://yourdomain.example/">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- JSON-LD (Website + Organization) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "name": "Sonalia",
+        "url": "https://yourdomain.example/",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://yourdomain.example/?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@type": "Organization",
+        "name": "Sonalia Project",
+        "url": "https://yourdomain.example/",
+        "logo": "https://yourdomain.example/assets/logo.svg",
+        "sameAs": []
+      }
+    ]
+  }
+  </script>
+
+  <!-- Favicon (任意) -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%230d1b2a'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' font-size='30' fill='%23ffffff' font-family='Arial'%3ES%3C/text%3E%3C/svg%3E" />
+
+  <!-- Critical CSS -->
+  <style>
+    :root{
+      --bg:#0b1220;         /* 深い群青 */
+      --fg:#e6eef5;         /* 高コントラスト白 */
+      --muted:#a9b8c9;
+      --accent:#3ee6a5;     /* 蛍光系グリーン */
+      --card:#121a2b;
+      --line:#20304a;
+      --shadow: 0 10px 24px rgba(0,0,0,.3);
+      --radius: 16px;
+      --maxw: 1200px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:Inter,system-ui,"Noto Sans JP",Segoe UI,Roboto,Helvetica,Arial,sans-serif;line-height:1.6}
+    a{color:var(--accent);text-decoration:none}
+    a:hover{text-decoration:underline}
+    img{max-width:100%;height:auto}
+    .container{max-width:var(--maxw);padding:0 20px;margin:0 auto}
+    header{
+      position:sticky;top:0;z-index:50;
+      backdrop-filter:saturate(140%) blur(6px);
+      background:linear-gradient(180deg,rgba(11,18,32,.9),rgba(11,18,32,.6));
+      border-bottom:1px solid var(--line)
+    }
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+    .brand{display:flex;gap:10px;align-items:center}
+    .brand svg{width:28px;height:28px}
+    .brand-name{font-weight:700;letter-spacing:.2px}
+    .nav-links{display:flex;gap:18px;align-items:center}
+    .nav-links a{color:var(--fg);opacity:.9}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 18px;border-radius:999px;background:var(--accent);color:#071311;font-weight:700;border:0;cursor:pointer;box-shadow:var(--shadow)}
+    .btn.secondary{background:#22314b;color:var(--fg);box-shadow:none;border:1px solid var(--line)}
+    .btn.small{padding:9px 14px;font-weight:600}
+    .hero{padding:64px 0 24px}
+    .grid{display:grid;gap:24px}
+    .hero-grid{grid-template-columns:1.1fr .9fr;align-items:center}
+    h1{font-size:clamp(28px,4vw,44px);line-height:1.15;margin:.2em 0}
+    h2{font-size:clamp(22px,3vw,32px);margin:0 0 8px}
+    p.lead{color:var(--muted);font-size:18px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px}
+    .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:14px}
+    .kpi{background:#0f1728;border:1px dashed #2a3d60;border-radius:12px;padding:14px;text-align:center}
+    .section{padding:64px 0}
+    .section .title{margin-bottom:10px}
+    .muted{color:var(--muted)}
+    .three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .steps{counter-reset:step}
+    .step{position:relative;padding-left:56px}
+    .step::before{
+      counter-increment:step;content:counter(step);
+      position:absolute;left:0;top:0;width:40px;height:40px;border-radius:50%;
+      display:grid;place-items:center;background:#17223a;border:1px solid var(--line);font-weight:700;color:var(--accent)
+    }
+    .screen{min-height:200px;background:#0e1629;border:1px solid var(--line);border-radius:14px}
+    .faq details{background:#0f1728;border:1px solid var(--line);border-radius:12px;padding:16px}
+    .faq details+details{margin-top:12px}
+    .faq summary{cursor:pointer;font-weight:700}
+    .pricing-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .badge{font-size:12px;padding:4px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+    .footer{padding:40px 0;border-top:1px solid var(--line)}
+    .footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:24px}
+    .legal a{color:var(--muted)}
+    .sticky-cta{
+      position:fixed;left:0;right:0;bottom:0;z-index:60;
+      background:linear-gradient(180deg,rgba(11,18,32,0),rgba(11,18,32,.9) 30%  );
+      padding:16px 12px
+    }
+    .sticky-cta .inner{max-width:var(--maxw);margin:0 auto;display:flex;gap:10px;align-items:center;justify-content:center}
+    .hidden{display:none}
+    /* Responsive */
+    @media (max-width: 960px){
+      .hero-grid,.three-col,.two-col,.pricing-cards,.footer-grid{grid-template-columns:1fr}
+      .kpis{grid-template-columns:1fr 1fr}
+      .nav-links a:not(.btn){display:none}
+    }
+  </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans">
+<body>
+  <!-- Header -->
+  <header role="banner" aria-label="サイトヘッダー">
+    <div class="container nav">
+      <div class="brand">
+        <!-- Simple inline SVG logo -->
+        <svg aria-hidden="true" viewBox="0 0 64 64" fill="none">
+          <circle cx="32" cy="32" r="28" fill="#0d1b2a" stroke="#3ee6a5" stroke-width="2"/>
+          <path d="M18 36c6-10 22-10 28 0" stroke="#3ee6a5" stroke-width="2" />
+          <circle cx="32" cy="32" r="6" fill="#3ee6a5"/>
+        </svg>
+        <span class="brand-name">Sonalia</span>
+      </div>
+      <nav class="nav-links" aria-label="メインナビゲーション">
+        <a href="#about">特徴</a>
+        <a href="#how">仕組み</a>
+        <a href="#screens">出力例</a>
+        <a href="#pricing">料金</a>
+        <a href="#faq">FAQ</a>
+        <a href="#contact" class="btn small" data-evt="nav_contact">お問い合わせ</a>
+      </nav>
+    </div>
+  </header>
 
-  <!-- Hero Section -->
-  <section class="relative min-h-screen flex flex-col items-center justify-center text-center bg-gradient-to-b from-emerald-100 to-white">
-    <h1 class="text-5xl md:text-6xl font-bold text-emerald-700 mb-4">Sonalia Diagnosis</h1>
-    <p class="text-lg md:text-xl text-gray-700 max-w-xl mb-8 leading-relaxed">
-      あなたの「思考・感情・行動」を8つの係数とFCEAループで解析し、<br>自分のOS構造を可視化する自己理解システム。
-    </p>
-    <a href="https://sonaria-app.netlify.app/diagnosis"
-       class="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg transition">
-      無料で診断する
-    </a>
-  </section>
-
-  <!-- About Section -->
-  <section class="py-20 bg-white">
-    <div class="max-w-5xl mx-auto px-6 text-center">
-      <h2 class="text-3xl font-bold text-emerald-700 mb-6">ソナリアとは？</h2>
-      <p class="text-gray-700 text-lg leading-relaxed mb-8">
-        ソナリア診断は、あなたの「心のOS」を可視化するセルフアセスメントツールです。<br>
-        IQ（思考）・EQ（感情）・KQ（共感）など8つの係数をもとに、あなたの行動・感情のループ構造を数値化します。
-      </p>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-        <div class="p-4 border rounded-lg bg-emerald-50">
-          <h3 class="font-bold text-emerald-700">IQ</h3><p>思考力・分析力</p>
+  <main id="top">
+    <!-- Hero -->
+    <section class="hero container">
+      <div class="grid hero-grid">
+        <div>
+          <span class="badge">βテスト参加者募集中</span>
+          <h1>あなたの“思考OS”を可視化し、<br/>最適な一歩を提案する。</h1>
+          <p class="lead">
+            ルーツ×体験×8係数（IQ/SQ/EQ/AQ/CQ/HQ/MQ/KQ）×行動OSパターン（FCEA）で、あなたの今とこれからを構造化。
+          </p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px">
+            <a class="btn" href="https://liff.line.me/LIFF_URL" target="_blank" rel="noopener" data-evt="cta_click_line" aria-label="LINEで無料診断をはじめる">
+              LINEで無料診断をはじめる
+              <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M14 3l7 7-1.41 1.41L15 7.83V21h-2V7.83l-4.59 4.58L7 10z"/></svg>
+            </a>
+            <a class="btn secondary" href="#download" data-evt="doc_view">資料をダウンロード</a>
+          </div>
+          <div class="kpis" aria-label="安心情報">
+            <div class="kpi"><strong>約3分</strong><div class="muted">初回診断</div></div>
+            <div class="kpi"><strong>30秒</strong><div class="muted">日々5問</div></div>
+            <div class="kpi"><strong>削除可</strong><div class="muted">データはいつでも</div></div>
+          </div>
         </div>
-        <div class="p-4 border rounded-lg bg-emerald-50">
-          <h3 class="font-bold text-emerald-700">EQ</h3><p>感情理解・共感</p>
-        </div>
-        <div class="p-4 border rounded-lg bg-emerald-50">
-          <h3 class="font-bold text-emerald-700">SQ</h3><p>社会的直感</p>
-        </div>
-        <div class="p-4 border rounded-lg bg-emerald-50">
-          <h3 class="font-bold text-emerald-700">KQ</h3><p>心の共鳴力</p>
+        <div>
+          <div class="card" aria-label="レーダー＆ループイメージ">
+            <h2 class="title">可視化イメージ</h2>
+            <p class="muted">8係数レーダー＋F→C→E→Aの行動OSループ</p>
+            <!-- SVG Mock: Radar + Loop -->
+            <div class="screen" role="img" aria-label="8係数と行動OSの図">
+              <svg viewBox="0 0 600 280" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                <!-- Radar -->
+                <g transform="translate(140,140)">
+                  <polygon points="0,-90 78,-45 78,45 0,90 -78,45 -78,-45" fill="none" stroke="#2a3d60"/>
+                  <polygon points="0,-60 52,-30 52,30 0,60 -52,30 -52,-30" fill="none" stroke="#2a3d60"/>
+                  <polygon points="0,-30 26,-15 26,15 0,30 -26,15 -26,-15" fill="none" stroke="#2a3d60"/>
+                  <!-- Sample area -->
+                  <polygon points="0,-60 40,-22 30,26 0,50 -50,25 -30,-18" fill="#3ee6a5" opacity=".25" stroke="#3ee6a5"/>
+                  <text x="0" y="-105" fill="#a9b8c9" text-anchor="middle" font-size="10">IQ</text>
+                  <text x="90" y="-40" fill="#a9b8c9" font-size="10">SQ</text>
+                  <text x="90" y="50" fill="#a9b8c9" font-size="10">EQ</text>
+                  <text x="0" y="110" fill="#a9b8c9" text-anchor="middle" font-size="10">AQ</text>
+                  <text x="-95" y="50" fill="#a9b8c9" font-size="10" text-anchor="end">CQ</text>
+                  <text x="-95" y="-40" fill="#a9b8c9" font-size="10" text-anchor="end">HQ</text>
+                </g>
+                <!-- FCEA Loop -->
+                <g transform="translate(430,140)">
+                  <circle cx="0" cy="0" r="70" fill="none" stroke="#2a3d60"/>
+                  <g>
+                    <circle cx="0" cy="-70" r="18" fill="#17223a" stroke="#3ee6a5"/>
+                    <text x="0" y="-65" fill="#3ee6a5" text-anchor="middle" font-size="12" font-weight="700">F</text>
+                  </g>
+                  <g>
+                    <circle cx="62" cy="-18" r="18" fill="#17223a" stroke="#3ee6a5"/>
+                    <text x="62" y="-13" fill="#3ee6a5" text-anchor="middle" font-size="12" font-weight="700">C</text>
+                  </g>
+                  <g>
+                    <circle cx="38" cy="57" r="18" fill="#17223a" stroke="#3ee6a5"/>
+                    <text x="38" y="62" fill="#3ee6a5" text-anchor="middle" font-size="12" font-weight="700">E</text>
+                  </g>
+                  <g>
+                    <circle cx="-50" cy="40" r="18" fill="#17223a" stroke="#3ee6a5"/>
+                    <text x="-50" y="45" fill="#3ee6a5" text-anchor="middle" font-size="12" font-weight="700">A</text>
+                  </g>
+                  <!-- Arrows -->
+                  <path d="M0,-52 Q30,-40 52,-22" stroke="#3ee6a5" fill="none"/>
+                  <path d="M56,-5 Q58,20 44,39" stroke="#3ee6a5" fill="none"/>
+                  <path d="M22,54 Q-10,54 -35,45" stroke="#3ee6a5" fill="none"/>
+                  <path d="M-50,22 Q-25,-15 0,-52" stroke="#3ee6a5" fill="none"/>
+                </g>
+              </svg>
+            </div>
+          </div>
         </div>
       </div>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="section container">
+      <h2 class="title">Sonaliaとは — 性格診断ではなく、“OS診断”</h2>
+      <p class="muted">従来の“当てはめ型”ではなく、あなた固有の掛け算（例：IQ×EQ×AQ…）から<strong>特別能力（SS）</strong>を導出。ルーツ×体験を基盤に、現在のOS状態を数値化します。</p>
+      <div class="three-col" style="margin-top:16px">
+        <div class="card"><strong>行動理由を掘り起こす</strong><br><span class="muted">ルーツ×成功/失敗体験で意思決定の土台を把握。</span></div>
+        <div class="card"><strong>8係数×FCEAで数値化</strong><br><span class="muted">思考・感情・社会性を多面的にモデル化。</span></div>
+        <div class="card"><strong>日々5問で当日補正</strong><br><span class="muted">“今日のモード”に合わせて一歩を提案。</span></div>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section id="how" class="section container">
+      <h2 class="title">仕組み（How it works）</h2>
+      <div class="two-col">
+        <div class="steps card">
+          <div class="step">
+            <h3>初期登録（1分）</h3>
+            <p class="muted">育成環境・学生時代・関係性などのルーツ入力。</p>
+          </div>
+          <div class="step" style="margin-top:12px">
+            <h3>36問診断（2分）</h3>
+            <p class="muted">日常シーンの選択式。各選択肢にF/C/E/Aタグ。</p>
+          </div>
+          <div class="step" style="margin-top:12px">
+            <h3>解析</h3>
+            <p class="muted">8係数＋相乗項（IQ×EQ等）＋遷移・停滞・整合性。</p>
+          </div>
+          <div class="step" style="margin-top:12px">
+            <h3>結果表示</h3>
+            <p class="muted">現在の能力／弱点コード／特別能力／Next You。</p>
+          </div>
+        </div>
+        <div class="card">
+          <h3>日々の変動トラッキング</h3>
+          <p class="muted">朝の<strong>日々5問</strong>で当日補正。1〜5分の軽トレを自動提案。</p>
+          <div class="screen" aria-hidden="true" style="margin-top:10px"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screens / Output -->
+    <section id="screens" class="section container">
+      <h2 class="title">出力イメージ</h2>
+      <div class="two-col">
+        <div class="card">
+          <h3>個人診断</h3>
+          <ul class="muted" style="margin-top:8px">
+            <li>OS係数・8係数レーダー</li>
+            <li>行動OS（FCEA）の強弱と停滞ノード</li>
+            <li><strong>SS：特別能力</strong>（ネーミング＋1行解説）</li>
+            <li><strong>Next You</strong>（今日の一歩 / 1分トレ）</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>チーム診断</h3>
+          <ul class="muted" style="margin-top:8px">
+            <li>ロール適合（BR）ヒートマップ</li>
+            <li>強み分布と誤配置リスク</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Benefits -->
+    <section id="benefits" class="section container">
+      <h2 class="title">価値（Before → After）</h2>
+      <div class="two-col">
+        <div class="card">
+          <h3>Before</h3>
+          <ul class="muted">
+            <li>相性や努力が“なんとなく”</li>
+            <li>判断が遅れがち</li>
+            <li>空回りする行動</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>After</h3>
+          <ul class="muted">
+            <li><strong>勝ち筋（WP/SS）の言語化</strong></li>
+            <li><strong>停滞ノードの回避手順</strong></li>
+            <li><strong>今日の動き方が1行で決まる</strong></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Science -->
+    <section id="science" class="section container">
+      <h2 class="title">科学とデータ（信頼性）</h2>
+      <div class="three-col">
+        <div class="card"><strong>二層解析：</strong><br><span class="muted">行動OS（FCEA）×8係数</span></div>
+        <div class="card"><strong>相乗項：</strong><br><span class="muted">IQ×EQ、EQ×KQ、CQ×MQ、HQ×AQ</span></div>
+        <div class="card"><strong>検証指標：</strong><br><span class="muted">再テスト相関・反証ペア一致率</span></div>
+      </div>
+      <p class="muted" style="margin-top:10px">個人データは暗号化・削除可能。学習は重み調整に限定します。</p>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="section container">
+      <h2 class="title">料金（β期間）</h2>
+      <div class="pricing-cards">
+        <div class="card">
+          <h3>β（個人）</h3>
+          <p class="muted">¥0</p>
+          <p class="muted">初回診断＋日々5問</p>
+        </div>
+        <div class="card">
+          <h3>個人Pro（予定）</h3>
+          <p class="muted">月額（後日公開）</p>
+          <p class="muted">詳細分析・履歴保存・提案高度化</p>
+        </div>
+        <div class="card">
+          <h3>チーム / 法人（予定）</h3>
+          <p class="muted">人数課金</p>
+          <p class="muted">管理画面・ロール適合・配属提案</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="section container faq">
+      <h2 class="title">FAQ</h2>
+      <details>
+        <summary>どれくらい時間がかかる？</summary>
+        <p class="muted">初回は約3分、日々5問は30秒程度です。</p>
+      </details>
+      <details>
+        <summary>精度はどう担保されますか？</summary>
+        <p class="muted">反証ペア・再テスト・当日補正の三段構えで検証します。</p>
+      </details>
+      <details>
+        <summary>データは安全ですか？</summary>
+        <p class="muted">匿名化と削除が可能。第三者提供は行いません。</p>
+      </details>
+      <details>
+        <summary>診断は変化しますか？</summary>
+        <p class="muted">日や状況により“モード”が補正されます。</p>
+      </details>
+    </section>
+
+    <!-- CTA -->
+    <section id="cta" class="section container">
+      <div class="card" style="text-align:center">
+        <h2 class="title">今すぐ、あなたの“OS”を知る</h2>
+        <p class="muted">LINEで無料診断を開始。所要3分・いつでも削除可。</p>
+        <p>
+          <a class="btn" href="https://liff.line.me/LIFF_URL" target="_blank" rel="noopener" data-evt="cta_click_line_footer">LINEで無料診断をはじめる</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- Download (資料DL) -->
+    <section id="download" class="section container">
+      <h2 class="title">資料ダウンロード</h2>
+      <div class="two-col">
+        <div class="card">
+          <p class="muted">プロジェクトの背景・ロジック・ロードマップをまとめたPDF。</p>
+          <a class="btn secondary" href="/download/sonalia-intro.pdf" target="_blank" rel="noopener" data-evt="doc_download">PDFを開く</a>
+        </div>
+        <div class="card" id="beta">
+          <h3>β参加フォーム</h3>
+          <!-- Netlify Forms -->
+          <form name="beta-signup" method="POST" data-netlify="true" netlify-honeypot="bot-field" data-netlify-recaptcha="true">
+            <input type="hidden" name="form-name" value="beta-signup">
+            <p class="hidden"><label>Don’t fill this: <input name="bot-field"></label></p>
+            <p><label>お名前<br><input type="text" name="name" required aria-required="true" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0f1728;color:var(--fg)"></label></p>
+            <p><label>メールアドレス<br><input type="email" name="email" required aria-required="true" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0f1728;color:var(--fg)"></label></p>
+            <p><label>利用目的<br>
+              <select name="usecase" required style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0f1728;color:var(--fg)">
+                <option value="">選択してください</option>
+                <option>個人利用</option>
+                <option>チーム/法人</option>
+                <option>その他</option>
+              </select>
+            </label></p>
+            <p><label>自由記述（任意）<br>
+              <textarea name="note" rows="3" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);background:#0f1728;color:var(--fg)"></textarea>
+            </label></p>
+            <div data-netlify-recaptcha="true"></div>
+            <p><button class="btn" type="submit" data-evt="beta_signup_submit">送信</button></p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer id="contact" class="footer">
+    <div class="container footer-grid">
+      <div>
+        <div class="brand" style="margin-bottom:10px">
+          <svg aria-hidden="true" viewBox="0 0 64 64" fill="none">
+            <circle cx="32" cy="32" r="28" fill="#0d1b2a" stroke="#3ee6a5" stroke-width="2"/>
+            <path d="M18 36c6-10 22-10 28 0" stroke="#3ee6a5" stroke-width="2" />
+            <circle cx="32" cy="32" r="6" fill="#3ee6a5"/>
+          </svg>
+          <span class="brand-name">Sonalia</span>
+        </div>
+        <p class="muted">心の構造を、未来の行動へ。<br>パートナー・法人連携を募集しています。</p>
+      </div>
+      <div>
+        <h4>リンク</h4>
+        <ul class="muted" style="list-style:none;padding:0;margin:0">
+          <li><a href="#about">特徴</a></li>
+          <li><a href="#how">仕組み</a></li>
+          <li><a href="#screens">出力例</a></li>
+          <li><a href="#pricing">料金</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>法務</h4>
+        <ul class="muted legal" style="list-style:none;padding:0;margin:0">
+          <li><a href="/privacy">プライバシーポリシー</a></li>
+          <li><a href="/terms">利用規約</a></li>
+          <li><a href="mailto:contact@yourdomain.example">contact@yourdomain.example</a></li>
+        </ul>
+      </div>
     </div>
-  </section>
-
-  <!-- FCEA Loop Section -->
-  <section class="py-20 bg-emerald-50">
-    <div class="max-w-4xl mx-auto px-6 text-center">
-      <h2 class="text-3xl font-bold text-emerald-700 mb-6">FCEAループとは</h2>
-      <p class="text-gray-700 text-lg leading-relaxed">
-        Feel（感じる）→ Check（確かめる）→ Evaluate（評価する）→ Act（行動する）。<br>
-        このループを解析することで、あなたの行動構造や意思決定の癖が見えてきます。
-      </p>
+    <div class="container" style="margin-top:14px">
+      <small class="muted">© <span id="year"></span> Sonalia Project</small>
     </div>
-  </section>
-
-  <!-- CTA -->
-  <section class="py-20 bg-white text-center">
-    <h2 class="text-3xl font-bold text-emerald-700 mb-6">あなたの思考と感情を、言語化しよう。</h2>
-    <p class="text-gray-700 mb-10">診断は3分。結果はその場で表示されます。</p>
-    <a href="https://sonaria-app.netlify.app/diagnosis"
-       class="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg transition">
-      今すぐ診断する
-    </a>
-  </section>
-
-  <footer class="py-8 bg-emerald-700 text-white text-center text-sm">
-    © 2025 Sonalia Project | Designed by T & Kai
   </footer>
 
+  <!-- Sticky CTA -->
+  <div class="sticky-cta" role="region" aria-label="固定CTA">
+    <div class="inner">
+      <a class="btn" href="https://liff.line.me/LIFF_URL" target="_blank" rel="noopener" data-evt="cta_click_line_sticky">LINEで無料診断をはじめる</a>
+      <a class="btn secondary" href="#beta" data-evt="beta_cta">β参加フォーム</a>
+    </div>
+  </div>
+
+  <!-- Minimal JS: GA events / smooth scroll / year / details analytics -->
+  <script>
+    // ---- Replace with your GA4 ID on Netlify env or hardcode ----
+    const GA_ID = window.GA_MEASUREMENT_ID || "G-XXXXXXXXXX";
+
+    // Simple GA loader (optional). If you already inject GA on Netlify, remove below.
+    (function gtagLoad(){
+      if (!GA_ID || GA_ID === "G-XXXXXXXXXX") return;
+      const s = document.createElement('script');
+      s.async = true; s.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
+      document.head.appendChild(s);
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      window.gtag = gtag;
+      gtag('js', new Date());
+      gtag('config', GA_ID, { anonymize_ip: true });
+    })();
+
+    // Event tracking
+    function track(evtName, params={}){
+      if (typeof gtag === 'function') gtag('event', evtName, params);
+    }
+    document.addEventListener('click', (e)=>{
+      const t = e.target.closest('[data-evt]');
+      if (t){ track(t.dataset.evt, { location: window.location.pathname }); }
+    });
+    // Track FAQ open
+    document.querySelectorAll('#faq details').forEach(d=>{
+      d.addEventListener('toggle', ()=>{ if(d.open) track('faq_open', {id: d.querySelector('summary').textContent.trim()}); });
+    });
+    // Smooth scroll for hash links
+    document.querySelectorAll('a[href^="#"]').forEach(a=>{
+      a.addEventListener('click', (e)=>{
+        const id = a.getAttribute('href').slice(1);
+        const el = document.getElementById(id);
+        if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth',block:'start'}); }
+      });
+    });
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Lighthouse hint: reveal sticky only after first scroll (avoid layout shift)
+    const sticky = document.querySelector('.sticky-cta');
+    let shown = false;
+    const onScroll = () => {
+      if (shown) return;
+      if (window.scrollY > 200) { sticky.classList.remove('hidden'); shown = true; }
+    };
+    sticky.classList.add('hidden');
+    window.addEventListener('scroll', onScroll, { passive:true });
+    setTimeout(()=>{ if(window.scrollY>200) { sticky.classList.remove('hidden'); } }, 1200);
+  </script>
 </body>
 </html>
